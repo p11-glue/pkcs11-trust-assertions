@@ -5,7 +5,7 @@
 	<title>Storing Trust Assertions in PKCS#11 Modules</title>
 	<section>
 		<title>Introduction</title>
-		<para>PKCS#11 is a useful and widely supported standard for storage and use
+		<para>PKCS#11 XXXREFXXX is a useful and widely supported standard for storage and use
 			of keys and certificates. It is often used with smart cards.</para>
 
 		<para>XXX</para>
@@ -33,10 +33,11 @@
 			<itemizedlist>
 				<listitem><para>Untrusted: Explicitly untrusted. Override other
 					trust.</para></listitem>
-				<listitem><para>Unknown: The trust is not known and should be
-					determined elsewhere.</para></listitem>
 				<listitem><para>Trusted: Explicitly trusted. Override other
 					trust</para></listitem>
+				<listitem><para>Trust Anchor: Explicitly trusted anchor which
+					can confer its trust (eg: via signatures) on other
+					subjects.</para></listitem>
 			</itemizedlist>
 		</section>
 
@@ -49,9 +50,6 @@
 
 			<para>In addition to the usage, the purpose can contain a more specific
 				designation, such as the hostname of a server.</para>
-
-			<para>The purpose can be a wildcard which matches any purpose. This is
-				especially useful for untrusted assertions.</para>
 		</section>
 
 
@@ -88,227 +86,374 @@
 
 		<para>Trust assertions are stored as objects on a PKCS#11 token. Although these are
 			specific to a certificate, they do not need to be stored on the same token as
-			the certificate. Trust assertions objects are of the class CKO_G_TRUST_ASSERTION
-			and have the following attributes.</para>
+			the certificate.</para>
 
-		<table>
-			<title>Trust root assertion</title>
-			<tgroup cols="3">
-				<thead>
-					<row>
-						<entry>Attribute</entry>
-						<entry>Data Type</entry>
-						<entry>Description</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>CKA_CLASS</entry>
-						<entry>CK_OBJECT_CLASS</entry>
-						<entry>CKO_G_TRUST_ASSERTION</entry>
-					</row>
-					<row>
-						<entry>CKA_G_TRUST_TYPE</entry>
-						<entry>CK_TRUST_TYPE</entry>
-						<entry>CKT_G_TRUST_ROOT</entry>
-					</row>
-					<row>
-						<entry>CKA_G_CERTIFICATE_VALUE</entry>
-						<entry>Byte array</entry>
-						<entry>DER SHA1 hash of the the DER-encoding of certificate. Required for
-							self-signed certificates.</entry>
-					</row>
-					<row>
-						<entry>CKA_G_PURPOSE</entry>
-						<entry>CK_UTF8_CHAR array</entry>
-						<entry>XXX</entry>
-					</row>
-					<row>
-						<entry>CKA_G_LEVEL</entry>
-						<entry>CK_TRUST_LEVEL</entry>
-						<entry>The trust level of this assertion</entry>
-					</row>
-				</tbody>
-			</tgroup>
-		</table>
+		<para>When represented as PKCS#11 objects, trust assertions get a bit less elegant
+			than the reference + purpose + trust-level described above. This is done
+			for practicality and minimizing the number of PKCS#11 lookups required
+			to do an operation.</para>
 
-		<table>
-			<title>Trust exception assertion</title>
-			<tgroup cols="3">
-				<thead>
-					<row>
-						<entry>Attribute</entry>
-						<entry>Data Type</entry>
-						<entry>Description</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>CKA_CLASS</entry>
-						<entry>CK_OBJECT_CLASS</entry>
-						<entry>CKO_G_TRUST_ASSERTION</entry>
-					</row>
-					<row>
-						<entry>CKA_G_TRUST_TYPE</entry>
-						<entry>CK_TRUST_TYPE</entry>
-						<entry>CKT_G_TRUST_EXCEPTION</entry>
-					</row>
-					<row>
-						<entry>CKA_ISSUER</entry>
-						<entry>Byte array</entry>
-						<entry>DER-encoding of the certificate issuer name</entry>
-					</row>
-					<row>
-						<entry>CKA_SERIAL_NUMBER</entry>
-						<entry>Byte array</entry>
-						<entry>DER-encoding of the certificate serial number</entry>
-					</row>
-					<row>
-						<entry>CKA_G_PURPOSE</entry>
-						<entry>CK_UTF8_CHAR array</entry>
-						<entry>XXX</entry>
-					</row>
-					<row>
-						<entry>CKA_G_LEVEL</entry>
-						<entry>CK_TRUST_LEVEL</entry>
-						<entry>The trust level of this assertion</entry>
-					</row>
-				</tbody>
-			</tgroup>
-		</table>
+		<section>
+			<title>Common Trust Assertion Object Attributes</title>
 
-		<table>
-			<title>CK_TRUST_LEVEL represenst a level of trust.</title>
-			<tgroup cols="2">
-				<thead>
-					<row>
-						<entry>Value</entry>
-						<entry>Description</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>CKT_G_UNTRUSTED</entry>
-						<entry>Explicitly untrusted. Overrides trust determined elsewhere.</entry>
-					</row>
-					<row>
-						<entry>CKT_G_UNKNOWN</entry>
-						<entry>Trust is unknown and should be determined elsewhere.</entry>
-					</row>
-					<row>
-						<entry>CKT_G_TRUSTED</entry>
-						<entry>Explicitly trusts the certificate in the assertion.</entry>
-					</row>
-				</tbody>
-			</tgroup>
-		</table>
+			<para>First we describe the attributes that all trust assertion objects have in
+				common. All trust assertions are of the class CKO_G_TRUST_ASSERTION.</para>
+
+			<table>
+				<title>General trust assertion attributes</title>
+				<tgroup cols="3">
+					<thead>
+						<row>
+							<entry>Attribute</entry>
+							<entry>Data Type</entry>
+							<entry>Description</entry>
+						</row>
+					</thead>
+					<tbody>
+						<row>
+							<entry>CKA_CLASS</entry>
+							<entry>CK_OBJECT_CLASS</entry>
+							<entry>CKO_G_TRUST_ASSERTION</entry>
+						</row>
+						<row>
+							<entry>CKA_G_TRUST_TYPE</entry>
+							<entry>CK_TRUST_TYPE</entry>
+							<entry>The type of trust assertion. This represents
+								the trust level. See more details below.</entry>
+						</row>
+						<row>
+							<entry>CKA_G_PURPOSE</entry>
+							<entry>CK_UTF8_CHAR array</entry>
+							<entry>The string representation of the purpose, usually
+								an OID.</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+
+			<para>The CKA_G_PURPOSE attribute contains a string which represents the purpose
+				of the trust assertion. These are generally OIDs. The following predefined
+				values match those of the Extended Key Usage X.509 extension. Other values
+				may be used when interoperability of the trust assertion between multiple
+				applications is not desired.</para>
+
+			<table>
+				<title>Predefined Purposes</title>
+				<tgroup cols="2">
+					<thead>
+						<row>
+							<entry>Value</entry>
+							<entry>Description</entry>
+						</row>
+					</thead>
+					<tbody>
+						<row>
+							<entry>1.3.6.1.5.5.7.3.1</entry>
+							<entry>TLS Server Authentication</entry>
+						</row>
+						<row>
+							<entry>1.3.6.1.5.5.7.3.2</entry>
+							<entry>TLS Client Authentication</entry>
+						</row>
+						<row>
+							<entry>1.3.6.1.5.5.7.3.3</entry>
+							<entry>Code Signing</entry>
+						</row>
+						<row>
+							<entry>1.3.6.1.5.5.7.3.4</entry>
+							<entry>Email Protection</entry>
+						</row>
+						<row>
+							<entry>1.3.6.1.5.5.7.3.5</entry>
+							<entry>IPSec Endpoint</entry>
+						</row>
+						<row>
+							<entry>1.3.6.1.5.5.7.3.6</entry>
+							<entry>IPSec Tunnel</entry>
+						</row>
+						<row>
+							<entry>1.3.6.1.5.5.7.3.7</entry>
+							<entry>IPsec User</entry>
+						</row>
+						<row>
+							<entry>1.3.6.1.5.5.7.3.8</entry>
+							<entry>Time Stamping</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+
+			<para>Each different type of trust assertion is represented by a different
+				CK_G_TRUST_TYPE value. The following types are defined.</para>
+
+			<table>
+				<title>Trust assertion types</title>
+				<tgroup cols="2">
+					<thead>
+						<row>
+							<entry>Trust Type</entry>
+							<entry>Description</entry>
+						</row>
+					</thead>
+					<tbody>
+						<row>
+							<entry>CKT_G_CERTIFICATE_UNTRUSTED</entry>
+							<entry>A trust assertion that represents an explicitly
+								untrust in a certificate.</entry>
+						</row>
+						<row>
+							<entry>CKT_G_CERTIFICATE_TRUST_EXCEPTION</entry>
+							<entry>A trust assertion that represents an explicitly
+								trust in a certificate.</entry>
+						</row>
+						<row>
+							<entry>CKT_G_CERTIFICATE_TRUST_ANCHOR</entry>
+							<entry>A trust assertion that represents a trust anchor
+								which is used as the root of a certificate trust
+								tree.</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+		</section>
+
+		<section>
+			<title>Certificate Exception Trust Assertion</title>
+
+			<para>A certificate exception is a trust assertion which signifies a trusted level
+				of trust in a certificate. The expectation is that all other trust validation
+				is overridden by this trust.</para>
+
+			<para>The certificate is referenced by a using the entire DER encoding of the
+				certificate.</para>
+
+			<para>All certificate exceptions have a designated peer as part of their purpose.
+				In the case of TLS authentication purposes, this is the host name of the
+				peer that is being communicated with. In the case of email protection
+				purposes this is the email address this certificate is to be used with.</para>
+
+			<para>In addition to the following, all the general trust assertion attributes
+				are present on a certificate exception object.</para>
+
+			<table>
+				<title>Certificate Exception Attributes</title>
+					<tgroup cols="3">
+					<thead>
+						<row>
+							<entry>Attribute</entry>
+							<entry>Data Type</entry>
+							<entry>Description</entry>
+						</row>
+					</thead>
+					<tbody>
+						<row>
+							<entry>CKA_G_TRUST_TYPE</entry>
+							<entry>CK_TRUST_TYPE</entry>
+							<entry>CKT_G_CERTIFICATE_TRUST_EXCEPTION</entry>
+						</row>
+						<row>
+							<entry>CKA_G_PEER</entry>
+							<entry>CK_UTF8_CHAR array</entry>
+							<entry>The peer part of the purpose.</entry>
+						</row>
+						<row>
+							<entry>CKA_G_CERTIFICATE_VALUE</entry>
+							<entry>Byte array</entry>
+							<entry>The DER encoding of the certificate.</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+
+		</section>
+
+		<section>
+			<title>Certificate Anchor Trust Assertion</title>
+
+			<para>A certificate anchor is a trust assertion which is to be used with a
+				certificate authority that is a trust root authority to verify
+				other certificates with.</para>
+
+			<para>This type of object signifies a trust anchor level of trust.</para>
+
+			<para>The certificate is referenced by a using the entire DER encoding of the
+				certificate.</para>
+
+			<para>In addition to the following, all the general trust assertion attributes
+				are present on a certificate exception object.</para>
+
+			<table>
+				<title>Certificate Anchor Attributes</title>
+				<tgroup cols="3">
+					<thead>
+						<row>
+							<entry>Attribute</entry>
+							<entry>Data Type</entry>
+							<entry>Description</entry>
+						</row>
+					</thead>
+					<tbody>
+						<row>
+							<entry>CKA_G_TRUST_TYPE</entry>
+							<entry>CK_TRUST_TYPE</entry>
+							<entry>CKT_G_CERTIFICATE_TRUST_ANCHOR</entry>
+						</row>
+						<row>
+							<entry>CKA_G_CERTIFICATE_VALUE</entry>
+							<entry>Byte array</entry>
+							<entry>The DER encoding of the certificate.</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+
+		</section>
+
+		<section>
+			<title>Certificate Untrusted Assertion</title>
+
+			<para>An untrusted certificate is a trust assertion which signifies the explicit
+				lack of	trust in a certificate. An example of this is an item in a CRL
+				or a certificate explicitly marked as untrusted by a user.</para>
+
+			<para>The certificate is referenced by a using the issuer and serial number
+				of the certificate in question.</para>
+
+			<para>In addition to the following, all the general trust assertion attributes
+				are present on a certificate exception object.</para>
+
+			<table>
+				<title>Untrusted Certificate Attributes</title>
+				<tgroup cols="3">
+					<thead>
+						<row>
+							<entry>Attribute</entry>
+							<entry>Data Type</entry>
+							<entry>Description</entry>
+						</row>
+					</thead>
+					<tbody>
+						<row>
+							<entry>CKA_G_TRUST_TYPE</entry>
+							<entry>CK_TRUST_TYPE</entry>
+							<entry>CKT_G_CERTIFICATE_UNTRUSTED</entry>
+						</row>
+						<row>
+							<entry>CKA_ISSUER</entry>
+							<entry>Byte array</entry>
+							<entry>DER-encoding of the certificate issuer name</entry>
+						</row>
+						<row>
+							<entry>CKA_SERIAL_NUMBER</entry>
+							<entry>Byte array</entry>
+							<entry>DER-encoding of the certificate serial number</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+
+		</section>
 	</section>
 
 	<section>
 		<title>Operations</title>
 
 		<section>
-			<title>Checking Trust Assertions</title>
-			<para>Trust assertions are checked using a PKCS#11 C_FindObjects operation.</para>
+			<title>Building a Certificate Chain</title>
 
-			<para>Because trust is involved and presence/lack of results is important, this
-				operation MUST be done with a specific set of lookup attributes. The
-				attributes used differ depending on whether the certificate is self-signed
-				or is signed by an issuer.</para>
+			<para>During TLS or other certificate verification operations, a certificate chain
+				must be built up. The certificate chain starts with a trust anchor and
+				each certificate in the chain is signed by the previous one. The chain ends
+				with the endpoint certificate for the peer.</para>
 
-			<para>Checking of trust assertions is always done for a specific purpose.</para>
+			<para>Conceptually building a certificate chain can be described as two operations
+				1) building the chain based on trust assertions, and 2) allowing then
+				allowing falsification of all or part of the chain based on trust
+				assertions.</para>
 
-			<section>
-				<title>Checking a Trust Root</title>
-				<para>A C_FindObjects operation is done using the following attributes.</para>
+			<orderedlist>
+				<listitem><para>Check if the endpoint certificate has a certificate exception
+					for the given purpose (and peer). If a certificate exception is found
+					then the certificate chain consists of one certificate and is considered
+					valid at this point.</para></listitem>
 
-				<table>
-					<title>Values for checking a root certificate authority.</title>
-					<tgroup cols="2">
-						<thead>
-							<row>
-								<entry>Attribute</entry>
-								<entry>Value</entry>
-							</row>
-						</thead>
-						<tbody>
-							<row>
-								<entry>CKA_CLASS</entry>
-								<entry>CKO_G_TRUST_ASSERTION</entry>
-							</row>
-							<row>
-								<entry>CKA_G_TRUST_TYPE</entry>
-								<entry>CKT_G_TRUST_ROOT</entry>
-							</row>
-							<row>
-								<entry>CKA_G_CERTIFICATE_VALUE</entry>
-								<entry>XXX</entry>
-							</row>
-							<row>
-								<entry>CKA_G_PURPOSE</entry>
-								<entry>XXX</entry>
-							</row>
-							<row>
-								<entry>CKA_G_TRUST_LEVEL</entry>
-								<entry>CKL_G_TRUSTED</entry>
-							</row>
-						</tbody>
-					</tgroup>
-				</table>
-			</section>
+				<listitem><para>Complete the initial certificate chain. Often the peer does not
+					send a complete chain and only sends its own certificate. Build up the
+					chain backwards from the bottom up using the certificate issuer to to
+					perform PKCS#11 lookups for objects matching the CKA_ISSUER. This is
+					done until a self-signed certificate is reached, or a certificate is not
+					found.</para></listitem>
 
-			<section>
-				<title>Checking a Trust Exception</title>
-				<para>A C_FindObjects operation is done using the following attributes.</para>
+				<listitem><para>Look for a trust anchor for each certificate in the chain
+					starting from the certificate that signed the endpoint certificate. When
+					a trust anchor is found then the certificate chain is truncated at that
+					point.</para></listitem>
 
-				<table>
-					<title>Values for checking a self-signed certificate.</title>
-					<tgroup cols="2">
-						<thead>
-							<row>
-								<entry>Attribute</entry>
-								<entry>Value</entry>
-							</row>
-						</thead>
-						<tbody>
-							<row>
-								<entry>CKA_CLASS</entry>
-								<entry>CKO_NETSCAPE_TRUST</entry>
-							</row>
-							<row>
-								<entry>CKA_G_TRUST_TYPE</entry>
-								<entry>CKT_G_TRUST_EXCEPTION</entry>
-							</row>
-							<row>
-								<entry>CKA_ISSUER</entry>
-								<entry>XXX</entry>
-							</row>
-							<row>
-								<entry>CKA_SERIAL_NUMBER</entry>
-								<entry>XXX</entry>
-							</row>
-							<row>
-								<entry>CKA_G_PURPOSE</entry>
-								<entry>XXX</entry>
-							</row>
-							<row>
-								<entry>CKA_G_TRUST_LEVEL</entry>
-								<entry>CKL_G_UNTRUSTED</entry>
-							</row>
-						</tbody>
-					</tgroup>
-				</table>
-			</section>
+				<listitem><para>Allow falsification for each certificate in the resulting
+					certificate chain by checking whether each certificate has PKCS#11
+					untrusted certificate trust assertion. If at any point an untrusted
+					trust assertion is found (eg: CRL) then the certificate chain is
+					considered invalid.</para></listitem>
+
+				<listitem><para>Pass the resulting certificate chain to the crypto library for
+					 further validation.</para></listitem>
+			</orderedlist>
 		</section>
 	</section>
 
 	<section>
-		<title>Acknowledgements</title>
-		<para>NSS: Who?</para>
+		<title>Justifications</title>
+
+		<para>Some answers to this spec was designed as it is.</para>
+
+		<section>
+			<title>Why use a complete DER encoding?</title>
+			<para>Conceivably we could use a hash of the certificate instead of the
+				CKA_G_CERTIFICATE_VALUE. NSS Trust Objects XXREFXX uses hashes in this
+				way.</para>
+
+			<para>In the current climate of hash algorithms being broken in various ways
+				it seems more prudent to avoid the hashing of the certificate and just
+				use the complete certificate DER-encoding for lookups.</para>
+
+		</section>
+
+		<section>
+			<title>Why lookup untrusted certificates by issuer + serial number?</title>
+
+			<para>Certificate revocation lists XXREFXX do not generally contain the full value
+				of the certificate or a hash thereof. They simply contain serial numbers,
+				which when combined with the issuer of the certificate revocation list,
+				are meant to uniquely identify a given certificate.</para>
+
+			<para>In order to support CRLs exposed as untrusted assertions (one of the design
+				goals) we must limit ourselves to this method of identifying untrusted
+				certificates.</para>
+
+		</section>
+
+		<section>
+			<title>Why not use NSS Trust Objects?</title>
+
+			<para>NSS contains an implementation of storing trust information via PKCS#11.
+				This has not been completely documented, but an overview is available
+				here XXREFXX.</para>
+
+			<para>After careful study of NSS's method of storing trust information, and discussion
+				with others, the following inherent problems are apparent.</para>
+
+			<orderedlist>
+				<listitem><para>Mandates the use of SHA1 and MD5 hashes both of which are
+					cryptographically broken in some way XXREFXX. See above
+					XXLINKXX</para></listitem>
+
+				<listitem><para>Only supports a distinct set of purposes, new purposes are
+					not supported.</para></listitem>
+
+				<listitem><para>Does not support a trust assertion limited to a single peer, which
+					precludes storage of trust assertions.</para></listitem>
+			</orderedlist>
+		</section>
 	</section>
 
-	<section>
-		<title>Problems</title>
-		<para>xxxx</para>
-	</section>
 </article>
