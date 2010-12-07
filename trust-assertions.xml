@@ -3,6 +3,24 @@
 ]>
 <article>
 	<title>Storing Trust Assertions in PKCS#11 Modules</title>
+
+	<articleinfo>
+		<releaseinfo>Rough "rougher than burlap underwear" draft</releaseinfo>
+		<date>December 2010</date>
+		<authorgroup>
+			<author>
+				<firstname>Stef</firstname>
+				<surname>Walter</surname>
+				<affiliation>
+					<orgname>Collabora Ltd</orgname>
+					<address>
+						<email>stefw@collabora.co.uk</email>
+					</address>
+				</affiliation>
+			</author>
+		</authorgroup>
+	</articleinfo>
+
 	<section>
 		<title>Introduction</title>
 		<para>PKCS#11 XXXREFXXX is a useful and widely supported standard for storage and use
