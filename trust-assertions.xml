@@ -23,8 +23,17 @@
 
 	<section>
 		<title>Introduction</title>
+
+		<para>Trust assertions are represent bits of trust information used by an
+			application in trust decisions. For example, trust assertions can represent
+			certificate authority root anchors, pinned certificate exceptions, or
+			revocation lists.</para>
+
 		<para>PKCS#11 XXXREFXXX is a useful and widely supported standard for storage and use
 			of keys and certificates. It is often used with smart cards.</para>
+
+		<para>This specification outlines how to store and lookup trust assertions via the
+			PKCS#11 API. We detail an extension which accomplishes this.</para>
 
 		<para>XXX</para>
 	</section>
