@@ -608,6 +608,20 @@
 				hash thereof.</para>
 		</section>
 
+		<section>
+			<title>How is this related to CKA_TRUSTED?</title>
+
+			<para>Later versions of the PKCS#11 spec contain an attribute called <literal>CKA_TRUSTED</literal>.
+				This attribute can be set on public keys, secret keys, and certificates by an application
+				as a flag indicating trust in some form. <literal>CKA_TRUSTED</literal> can be used as a
+				crude form of marking which certificates can be used as a certificate authority trust
+				anchor.</para>
+
+			<para>We see this specification as complementary to <literal>CKA_TRUSTED</literal>. This specification
+				defines a fine grained method for representing all sorts of positive and negative trust
+				assertions, and not just anchored certificates.</para>
+		</section>
+
 	</section>
 
 </article>
