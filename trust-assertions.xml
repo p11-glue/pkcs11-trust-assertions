@@ -195,7 +195,7 @@
 			<para>The <literal>CKA_X_PURPOSE</literal> attribute contains a string which represents
 				the <link linkend='trust-purpose'>purpose of the trust assertion</link>. These are
 				generally OIDs. The following predefined values match those of the
-				<ulink url='http://www.ietf.org/rfc/rfc3280.txt'>Extended Key Usage X.509 extension</ulink>.
+				<ulink url='http://www.ietf.org/rfc/rfc2459.txt'>Extended Key Usage X.509 extension</ulink>.
 				Other values may be used when interoperability of the trust assertion between multiple
 				applications is not required.</para>
 
@@ -288,7 +288,7 @@
 			<para>An anchored certificate is a trust assertion which is to be used with a
 				certificate authority that has signed other trusted certificates. It
 				is to be used as the anchor in a
-				<ulink url='http://www.ietf.org/rfc/rfc3280.txt'>certificate chain</ulink>.</para>
+				<ulink url='http://www.ietf.org/rfc/rfc5280.txt'>certificate chain</ulink>.</para>
 
 			<para>Because it is a positive trust assertion, the certificate is referenced by
 				using the entire DER encoding of the certificate.</para>
@@ -430,7 +430,7 @@
 			<title>Building a Certificate Chain</title>
 
 			<para>During TLS or other certificate verification operations, a
-				<ulink url='http://www.ietf.org/rfc/rfc3280.txt'>certificate chain</ulink>
+				<ulink url='http://www.ietf.org/rfc/rfc5280.txt'>certificate chain</ulink>
 				must be built. The certificate chain starts with a endpoint certificate for
 				the peer, and usually ends with a certificate explicitly trusted in some
 				way, such as a certificate authority trust anchor. The certificates in the
@@ -552,7 +552,7 @@
 		<section>
 			<title>Why refer to certificates in negative trust assertions by issuer and serial number?</title>
 
-			<para><ulink url='http://www.ietf.org/rfc/rfc3280.txt'>Certificate revocation lists</ulink>
+			<para><ulink url='http://www.ietf.org/rfc/rfc5280.txt'>Certificate revocation lists</ulink>
 				do not generally contain the full value of the certificate or a hash thereof.
 				They simply contain serial numbers, which when combined with the issuer of the
 				certificate revocation list, are meant to uniquely identify a given certificate.</para>
