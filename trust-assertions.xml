@@ -593,6 +593,21 @@
 					object leading to more complex lookup and modification operations.</para></listitem>
 			</itemizedlist>
 		</section>
+
+		<section>
+			<title>Why not use PKCS#11 URIs?</title>
+
+			<para>The <ulink url='http://tools.ietf.org/html/draft-pechanec-pkcs11uri-03'>PKCS#11 URI Scheme</ulink>
+				is a useful draft standard which can be used to identify objects stored on a PKCS#11
+				token. It has been suggested that a list of PKCS#11 URIs could be used to identify
+				which certificates are useful as certificate anchors.</para>
+
+			<para>As outlined above, positive trust assertions build up trust. Certificates used in positive
+				trust assertions must be identified by the certificate value or a hash thereof. PKCS#11
+				URIs do not have the ability to uniquely identify a certificate by its DER encoding or a
+				hash thereof.</para>
+		</section>
+
 	</section>
 
 </article>
