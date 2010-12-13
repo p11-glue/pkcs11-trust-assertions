@@ -45,6 +45,11 @@
 			in this specification is unfortunate. An unambiguous term is desirable.
 			The author cringes every time the word <emphasis>trust</emphasis> is used.
 			The author cringes a lot.</para>
+
+		<para>In this specification we deal only with trust assertions related to certificates.
+			In theory, trust assertions can relate to secret keys, and other subjects
+			as well. Future versions of this specification may specify trust assertions
+			for these other subjects.</para>
 	</section>
 
 	<section>
