@@ -69,9 +69,9 @@
 
 			<variablelist>
 				<varlistentry>
-					<term>Untrusted</term>
+					<term>Distrusted</term>
 					<listitem><para>The trust assertion marks the subject as explicitly
-						untrusted. This overrides other trust.</para></listitem>
+						distrusted. This overrides other trust.</para></listitem>
 				</varlistentry>
 				<varlistentry>
 					<term>Trusted</term>
@@ -95,7 +95,7 @@
 			<para>Trust assertions that falsify trust can be called <emphasis>negative trust
 				assertions</emphasis>. These trust assertions tear down trust in a subject. They
 				assume the subject is already trusted, and want to revoke or falsify
-				that trust. These have a level of trust of <emphasis>untrusted</emphasis>.
+				that trust. These have a level of trust of <emphasis>distrusted</emphasis>.
 				Examples of this kind of trust assertion are certificate revocation lists.</para>
 
 			<para>Negative trust assertions always override positive trust assertions.</para>
@@ -273,9 +273,9 @@
 								explicit trust in a certificate.</entry>
 						</row>
 						<row>
-							<entry><literal>CKT_X_UNTRUSTED_CERTIFICATE</literal></entry>
+							<entry><literal>CKT_X_DISTRUSTED_CERTIFICATE</literal></entry>
 							<entry>A negative trust assertion that represents an
-								explicit untrust in a certificate.</entry>
+								explicit distrust in a certificate.</entry>
 						</row>
 					</tbody>
 				</tgroup>
@@ -377,21 +377,21 @@
 		</section>
 
 		<section>
-			<title>Untrusted Certificate Assertion</title>
+			<title>Distrusted Certificate Assertion</title>
 
-			<para>An untrusted certificate is a trust assertion which signifies the explicit
+			<para>An distrusted certificate is a trust assertion which signifies the explicit
 				lack of	trust in a certificate. An example of this is an item in a CRL
-				or a certificate explicitly marked as untrusted by a user.</para>
+				or a certificate explicitly marked as distrusted by a user.</para>
 
 			<para>Because it is a negative trust assertion, the certificate is referenced by
 				a using the issuer and serial number of the certificate in question.</para>
 
 			<para>In addition to the following, all the
 				<link linkend='assertion-attributes'>general trust assertion attributes</link>
-				are present on a untrusted certificate assertion.</para>
+				are present on a distrusted certificate assertion.</para>
 
 			<table>
-				<title>Untrusted Certificate Assertion Attributes</title>
+				<title>Distrusted Certificate Assertion Attributes</title>
 				<tgroup cols="3">
 					<thead>
 						<row>
@@ -404,7 +404,7 @@
 						<row>
 							<entry><literal>CKA_X_ASSERTION_TYPE</literal></entry>
 							<entry><literal>CK_X_ASSERTION_TYPE</literal></entry>
-							<entry><literal>CKT_X_UNTRUSTED_CERTIFICATE</literal></entry>
+							<entry><literal>CKT_X_DISTRUSTED_CERTIFICATE</literal></entry>
 						</row>
 						<row>
 							<entry><literal>CKA_ISSUER</literal></entry>
@@ -507,17 +507,17 @@
 				<listitem>
 					<para>Allow falsification for each certificate in the resulting
 						certificate chain by checking whether each certificate has
-						an untrusted certificate assertion. If at any point an untrusted
+						an distrusted certificate assertion. If at any point an distrusted
 						assertion is found (eg: a certificate listed on a certificate
 						revocation list) then the certificate chain is considered invalid.</para>
 
-					<para>To check for untrusted certificates, perform a
+					<para>To check for distrusted certificates, perform a
 						<literal>C_FindObject</literal> operation with the following
 						attributes:</para>
 
         <programlisting>
 	CKA_CLASS: CKO_X_ASSERTION_TYPE
-	CKA_X_ASSERTION_TYPE: CKT_X_UNTRUSTED_CERTIFICATE
+	CKA_X_ASSERTION_TYPE: CKT_X_DISTRUSTED_CERTIFICATE
 	CKA_X_CERTIFICATE_VALUE: <emphasis>DER encoding of certificate</emphasis>
 	CKA_X_PURPOSE: <emphasis>purpose string</emphasis>
 	</programlisting>
@@ -557,7 +557,7 @@
 				They simply contain serial numbers, which when combined with the issuer of the
 				certificate revocation list, are meant to uniquely identify a given certificate.</para>
 
-			<para>In order to support CRLs exposed as untrusted certificate assertions (which is one
+			<para>In order to support CRLs exposed as distrusted certificate assertions (which is one
 				of the design goals of this specification) we must limit ourselves to this method
 				of referencing certificates in negative trust assertions.</para>
 		</section>
