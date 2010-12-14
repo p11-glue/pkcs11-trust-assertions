@@ -161,6 +161,11 @@
 				common. All trust assertions are of the class
 				<literal>CKO_X_TRUST_ASSERTION</literal>.</para>
 
+			<para>In addition to the following trust assertion attributes, all the stardard
+				PKCS#11 storage object attributes of <literal>CKA_TOKEN</literal>,
+				<literal>CKA_PRIVATE</literal>, <literal>CKA_MODIFIABLE</literal> and
+				<literal>CKA_LABEL</literal> may be present.</para>
+
 			<table id='assertion-attributes'>
 				<title>General trust assertion attributes</title>
 				<tgroup cols="3">
