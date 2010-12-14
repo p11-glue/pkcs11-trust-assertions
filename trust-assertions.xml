@@ -205,9 +205,12 @@
 			<para>The <literal>CKA_X_PURPOSE</literal> attribute contains a string which represents
 				the <link linkend='trust-purpose'>purpose of the trust assertion</link>. These are
 				generally OIDs. The following predefined values match those of the
-				<ulink url='http://www.ietf.org/rfc/rfc2459.txt'>Extended Key Usage X.509 extension</ulink>.
+				<ulink url='http://www.ietf.org/rfc/rfc5280.txt'>Extended Key Usage X.509 extension</ulink>.
 				Other values may be used when interoperability of the trust assertion between multiple
 				applications is not required.</para>
+
+			<para>Applications should ignore trust assertions whose <literal>CKA_X_PURPOSE</literal> attribute
+				they do not understand. They should not treat them as negative assertions.</para>
 
 			<table id='defined-purposes'>
 				<title>Predefined Purposes</title>
@@ -234,18 +237,6 @@
 						<row>
 							<entry><literal>1.3.6.1.5.5.7.3.4</literal></entry>
 							<entry>Email Protection</entry>
-						</row>
-						<row>
-							<entry><literal>1.3.6.1.5.5.7.3.5</literal></entry>
-							<entry>IPsec Endpoint</entry>
-						</row>
-						<row>
-							<entry><literal>1.3.6.1.5.5.7.3.6</literal></entry>
-							<entry>IPsec Tunnel</entry>
-						</row>
-						<row>
-							<entry><literal>1.3.6.1.5.5.7.3.7</literal></entry>
-							<entry>IPsec User</entry>
 						</row>
 						<row>
 							<entry><literal>1.3.6.1.5.5.7.3.8</literal></entry>
