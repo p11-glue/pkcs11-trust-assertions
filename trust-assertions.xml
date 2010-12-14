@@ -21,7 +21,7 @@
 		</authorgroup>
 	</articleinfo>
 
-	<section>
+	<section id="introduction">
 		<title>Introduction</title>
 
 		<para>Trust assertions are represent bits of trust information used by an
@@ -52,7 +52,7 @@
 			for these other subjects.</para>
 	</section>
 
-	<section>
+	<section id="trust-assertions">
 		<title>Trust Assertions</title>
 
 		<para>A trust assertion is a generic concept. Each trust assertion describes a level
@@ -129,7 +129,7 @@
 		</section>
 	</section>
 
-	<section>
+	<section id="pkcs11-objects">
 		<title>PKCS#11 Trust Assertion Objects</title>
 
 		<para>Trust assertions are stored as objects on a PKCS#11 token. Although these are
@@ -154,7 +154,7 @@
 			lists. Therefore different methods must be used to refer to certificates in
 			these different situations. The objects below reflect this.</para>
 
-		<section>
+		<section id="common-attributes">
 			<title>Common Trust Assertion Object Attributes</title>
 
 			<para>First we describe the attributes that all trust assertion objects have in
@@ -287,7 +287,7 @@
 			</table>
 		</section>
 
-		<section>
+		<section id="anchored-attributes">
 			<title>Anchored Certificate Assertion</title>
 
 			<para>An anchored certificate is a trust assertion which is to be used with a
@@ -329,7 +329,7 @@
 
 		</section>
 
-		<section>
+		<section id="pinned-attributes">
 			<title>Pinned Certificate Assertion</title>
 
 			<para>A pinned certificate is an endpoint certificate (not an authority) which is
@@ -381,7 +381,7 @@
 
 		</section>
 
-		<section>
+		<section id="distrusted-attributes">
 			<title>Distrusted Certificate Assertion</title>
 
 			<para>An distrusted certificate is a trust assertion which signifies the explicit
@@ -428,10 +428,10 @@
 		</section>
 	</section>
 
-	<section>
+	<section id="operations">
 		<title>Operations</title>
 
-		<section>
+		<section id="operation-build-chain">
 			<title>Building a Certificate Chain</title>
 
 			<para>During TLS or other certificate verification operations, a
@@ -536,12 +536,12 @@
 		</section>
 	</section>
 
-	<section>
+	<section id="justifications">
 		<title>Justifications</title>
 
 		<para>Some answers to why this spec was designed as it is.</para>
 
-		<section>
+		<section id="justification-why-no-hash">
 			<title>Why use a complete certificate DER encoding for positive trust assertions?</title>
 			<para>Conceivably we could use a hash of the certificate instead of the
 				<literal>CKA_X_CERTIFICATE_VALUE</literal>.
@@ -554,7 +554,7 @@
 				that is not dependent on the long term viability of a specific hash algorithm.</para>
 		</section>
 
-		<section>
+		<section id="justification-why-issuer-serial">
 			<title>Why refer to certificates in negative trust assertions by issuer and serial number?</title>
 
 			<para><ulink url='http://www.ietf.org/rfc/rfc5280.txt'>Certificate revocation lists</ulink>
@@ -567,7 +567,7 @@
 				of referencing certificates in negative trust assertions.</para>
 		</section>
 
-		<section>
+		<section id="justification-why-not-nss">
 			<title>Why not use NSS Trust Objects?</title>
 
 			<para>NSS contains an implementation of storing trust information via PKCS#11.
@@ -599,7 +599,7 @@
 			</itemizedlist>
 		</section>
 
-		<section>
+		<section id="justification-why-not-uris">
 			<title>Why not use PKCS#11 URIs?</title>
 
 			<para>The <ulink url='http://tools.ietf.org/html/draft-pechanec-pkcs11uri-03'>PKCS#11 URI Scheme</ulink>
@@ -613,7 +613,7 @@
 				hash thereof.</para>
 		</section>
 
-		<section>
+		<section id="justification-why-cka-trusted">
 			<title>How is this related to CKA_TRUSTED?</title>
 
 			<para>Later versions of the PKCS#11 spec contain an attribute called <literal>CKA_TRUSTED</literal>.
