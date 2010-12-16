@@ -1,18 +1,30 @@
-/* pkcs11x.h
-   Copyright 2010 Collabora Ltd
+/*
+ * pkcs11x.h
+ *  Copyright 2010 Collabora, Ltd
+ *
+ * This file is free software; as a special exception the author gives
+ * unlimited permission to copy and/or distribute it, with or without
+ * modifications, as long as this notice is preserved.
+ *
+ * This file is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY, to the extent permitted by law; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.
+ */
 
-   This file is free software; as a special exception the author gives
-   unlimited permission to copy and/or distribute it, with or without
-   modifications, as long as this notice is preserved.
+/*
+ * The latest version of this file is at:
+ *
+ * git://thewalter.net/git/pkcs11-trust-assertions
+ *
+ * or viewable on the web at:
+ *
+ * http://thewalter.net/git/cgit.cgi/pkcs11-trust-assertions/tree/pkcs11-trust-assertions.h
+ *
+ */
 
-   This file is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY, to the extent permitted by law; without even
-   the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-   PURPOSE.  */
-
-
-#ifndef PKCS11X_H
-#define PKCS11X_H
+#ifndef PKCS11_TRUST_ASSERTIONS_H
+#define PKCS11_TRUST_ASSERTIONS_H
 
 #include "pkcs11.h"
 
@@ -41,4 +53,4 @@ typedef CK_ULONG CK_X_ASSERTION_TYPE;
 
 #define CKT_X_ANCHORED_CERTIFICATE               3UL
 
-#endif /* PKCS11X_H */
+#endif /* PKCS11_TRUST_ASSERTIONS_H */
